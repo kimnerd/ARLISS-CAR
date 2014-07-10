@@ -18,11 +18,11 @@ GPS gpsEx;
 Servo Carsteer;
 Servo Carspeed;
 LSM303 compass;
-float destlat = 37.460595;
-float destlong = 126.951068;
+float destlat = 37.275398;
+float destlong = 126.569114;
 
 void setup(){
-//  Serial.begin(9600);
+  Serial.begin(9600);
   Serial2.begin(9600);
   //for compass sensor
   Wire.begin();
@@ -54,9 +54,9 @@ void loop(){
   float heading_ = compass.heading();
 //  Serial.println("d");
   go(destlat,destlong,lat,lng, heading_);
+  Serial.println(lng,6);
 //  steer(destlat,destlong,lat,lng,heading_);
 //  Serial.println("e");
-  delay(10);
 }
 
 void go(float destlat,float destlong,float lat,float lng,float heading_){
@@ -82,17 +82,29 @@ void steer(float destlat,float destlong,float flatitude,float flongitude,float h
     steer_car = steer_car + 360;
   }
   float osteer=0;
+//  if (180.0 <= steer_car && steer_car < 270.0){
+//    osteer = 60;
+//  }
+//  else if(270.0 <= steer_car && steer_car <= 360.0){
+//    osteer = (3*steer_car)/9 - 30;
+//  }
+//  else if(0.0 <= steer_car && steer_car < 90.0){
+//    osteer = (3*steer_car)/9 + 90;
+//  }
+//  else if(90.0 <=steer_car && steer_car < 180.0){
+//    osteer = 120;
+//  }
   if (180.0 <= steer_car && steer_car < 270.0){
-    osteer = 50;
+    osteer = 120;
   }
   else if(270.0 <= steer_car && steer_car <= 360.0){
-    osteer = (4*steer_car)/9 - 70;
+    osteer = map(steer_car, 270, 360, 120, 90);// (-1)*(3*steer_car)/9 + 210;
   }
   else if(0.0 <= steer_car && steer_car < 90.0){
-    osteer = (4*steer_car)/9 + 90;
+    osteer = map(steer_car, 0, 90, 90, 60);//(-1)*(3*steer_car)/9 + 90;
   }
   else if(90.0 <=steer_car && steer_car < 180.0){
-    osteer = 130;
+    osteer = 60;
   }
   Carsteer.write(osteer);
 }
